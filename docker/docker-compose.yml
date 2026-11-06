@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong!Passw0rd"
+    ports: ["1433:1433"]
+
+  ai-service:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.ai
+    environment:
+      AI_SERVICE_KEY: dev-service-key
+    ports: ["8000:8000"]
+    volumes:
+      - ../src/backend/src/WebApi/uploads:/app/uploads
+
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    environment:
+      ConnectionStrings__Default: "Server=sqlserver,1433;Database=AnalyticsDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;"
+      FastApi__BaseUrl: "http://ai-service:8000"
+      FastApi__ServiceKey: "dev-service-key"
+      Jwt__Key: "super-secret-dev-key-change-in-prod-please-32chars!"
+    ports: ["5000:8080"]
+    depends_on: [sqlserver, ai-service]
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    ports: ["5173:80"]

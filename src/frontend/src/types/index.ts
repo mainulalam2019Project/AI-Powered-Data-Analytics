@@ -1,0 +1,6 @@
+export interface AuthResponse { accessToken: string; refreshToken: string; expiresAt: string; userId: string; email: string; fullName: string; roles: string[]; }
+export interface Project { id: string; name: string; description?: string; createdAt: string; datasetCount: number; }
+export interface Dataset { id: string; projectId: string; name: string; originalFileName: string; fileType: string; fileSizeBytes: number; status: string; rowCount?: number; columnCount?: number; missingValueCount?: number; duplicateRowCount?: number; createdAt: string; }
+export interface DatasetColumn { id: string; name: string; dataType: string; isNullable: boolean; missingCount: number; distinctCount?: number; sampleValues?: any; statistics?: any; }
+export interface DatasetProfile { dataset: Dataset; columns: DatasetColumn[]; summary?: any; }
+export interface MLModel { id: string; datasetId: string; name: string; taskType: string; algorithm: string; targetColumn?: string; status: string; metrics?: string; featureImportance?: string; createdAt: string; }
